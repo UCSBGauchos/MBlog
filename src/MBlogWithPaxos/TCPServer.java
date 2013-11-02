@@ -26,7 +26,7 @@ public class TCPServer {
 		    	in = new DataInputStream(socket.getInputStream());
 		    	out = new DataOutputStream(socket.getOutputStream());
 		    	String str = in.readUTF();
-	    		System.out.println("The server receive "+str);	
+	    		System.out.println("The message which the server receive is "+str);	
 	    	}
 	    }catch(IOException e){
 	    	System.out.println("ERRO:"+e);
