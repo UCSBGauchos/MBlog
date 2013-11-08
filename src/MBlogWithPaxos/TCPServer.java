@@ -7,13 +7,15 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.regex.Pattern;
 
 public class TCPServer {
-	public static void main(String [] args){
+	public void serverFunction(){
 		ServerSocket server = null;
 		Socket socket = null;
 		DataOutputStream out = null;
 	    DataInputStream in = null;
+	    Replication localRep = new Replication();
 	    try{
             server=new ServerSocket(7777);
 	    }
@@ -26,7 +28,13 @@ public class TCPServer {
 		    	in = new DataInputStream(socket.getInputStream());
 		    	out = new DataOutputStream(socket.getOutputStream());
 		    	String str = in.readUTF();
-	    		System.out.println("The message which the server receive is "+str);	
+		    	String recvMicroBlog = str.substring(5);
+		    	localRep.log.add(recvMicroBlog);
+		    	System.out.println("Now the local log has "+localRep.log.size()+" blogs");
+		    	for(String blog: localRep.log){
+		    		System.out.print(blog+" ");
+		    	}
+		    	System.out.println();
 	    	}
 	    }catch(IOException e){
 	    	System.out.println("ERRO:"+e);

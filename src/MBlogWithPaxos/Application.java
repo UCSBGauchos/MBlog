@@ -6,8 +6,11 @@ import java.util.regex.Pattern;
 
 public class Application {
 	
-	public void post(){
-		System.out.println("Begin post process");
+	//call client function, which is used to send msg to replication
+	public void post(Message msg){
+		String TCPMsg = msg.operation+' '+msg.value;
+		Client c = new Client();
+		c.clientFunction(TCPMsg);
 	}
 	
 	public void read(){
@@ -23,17 +26,23 @@ public class Application {
 	public void commandLineInterface(String inputCommand){
 		//create four patterns for the input
 		Pattern PostPattern = Pattern.compile("post\\((.)+\\)");
+		Pattern PostSplitPattern = Pattern.compile("\\(|\\)");
 		Pattern ReadPattern = Pattern.compile("read");
 		Pattern FailPattern = Pattern.compile("fail");
 		Pattern UnfailPattern = Pattern.compile("unfail");
 		//create four matcher for the pattern
+		
+		
 		Matcher PostMatcher = PostPattern.matcher(inputCommand);
 		Matcher ReadMatcher = ReadPattern.matcher(inputCommand);
 		Matcher FailMatcher = FailPattern.matcher(inputCommand);
 		Matcher UnfailMatcher = UnfailPattern.matcher(inputCommand);
 		
 		if(PostMatcher.matches()){
-			post();
+			String[] result = PostSplitPattern.split(inputCommand);
+			String microBlog = result[1];
+			Message newMessage = new Message("post", microBlog);
+			post(newMessage);
 		}else if(ReadMatcher.matches()){
 			read();
 		}else if(FailMatcher.matches()){
