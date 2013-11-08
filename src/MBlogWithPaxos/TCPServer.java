@@ -28,13 +28,21 @@ public class TCPServer {
 		    	in = new DataInputStream(socket.getInputStream());
 		    	out = new DataOutputStream(socket.getOutputStream());
 		    	String str = in.readUTF();
-		    	String recvMicroBlog = str.substring(5);
-		    	localRep.log.add(recvMicroBlog);
-		    	System.out.println("Now the local log has "+localRep.log.size()+" blogs");
-		    	for(String blog: localRep.log){
-		    		System.out.print(blog+" ");
+		    	if(str!=null){
+		    		String recvMicroBlog = str.substring(5);
+			    	localRep.log.add(recvMicroBlog);
+			    	System.out.println("Now the local log has "+localRep.log.size()+" blogs");
+			    	for(String blog: localRep.log){
+			    		System.out.print(blog+" ");
+			    	}
+			    	System.out.println();
+			    	String returnMsg = "SUCCESS";
+			    	out.writeUTF(returnMsg);
+		    	}else{
+		    		String returnMsg = "FAIL";
+			    	out.writeUTF(returnMsg);
 		    	}
-		    	System.out.println();
+		    	
 	    	}
 	    }catch(IOException e){
 	    	System.out.println("ERRO:"+e);

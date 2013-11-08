@@ -5,16 +5,14 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class Application {
-	
 	//call client function, which is used to send msg to replication
 	public void post(Message msg){
 		String TCPMsg = msg.operation+' '+msg.value;
 		Client c = new Client();
 		c.clientFunction(TCPMsg);
 	}
-	
-	public void read(){
-		System.out.println("Begin read process");
+	public void read(){	
+		
 	}
 	public void fail(){
 		System.out.println("Begin fail process");

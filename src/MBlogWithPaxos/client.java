@@ -20,6 +20,8 @@ public class Client {
 			//Scanner scan = new Scanner(System.in);  
 			//String str = scan.nextLine();
 			out.writeUTF(message);
+			String feedback = in.readUTF();
+			System.out.println("The application gets feedBack "+feedback);
 			//}
 		}
 		catch(IOException e){
