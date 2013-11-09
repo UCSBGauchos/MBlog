@@ -29,18 +29,23 @@ public class TCPServer {
 		    	out = new DataOutputStream(socket.getOutputStream());
 		    	String str = in.readUTF();
 		    	if(str!=null){
-		    		String recvMicroBlog = str.substring(5);
-			    	localRep.log.add(recvMicroBlog);
-			    	System.out.println("Now the local log has "+localRep.log.size()+" blogs");
-			    	for(String blog: localRep.log){
-			    		System.out.print(blog+" ");
-			    	}
-			    	System.out.println();
-			    	String returnMsg = "SUCCESS";
-			    	out.writeUTF(returnMsg);
-		    	}else{
-		    		String returnMsg = "FAIL";
-			    	out.writeUTF(returnMsg);
+		    		if(str.substring(0, 4).equals("post")){
+		    			String recvMicroBlog = str.substring(5);
+				    	localRep.log.add(recvMicroBlog);
+//				    	System.out.println("Now the local log has "+localRep.log.size()+" blogs");
+//				    	for(String blog: localRep.log){
+//				    		System.out.print(blog+" ");
+//				    	}
+//				    	System.out.println();
+				    	String returnMsg = "SUCCESS";
+				    	out.writeUTF(returnMsg);
+		    		}else if(str.substring(0,4).equals("read")){
+		    			String returnMsg="";
+		    			for(String blog: localRep.log){
+		    				returnMsg+=blog;
+				    	}
+		    			out.writeUTF(returnMsg);
+		    		}
 		    	}
 		    	
 	    	}

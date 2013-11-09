@@ -11,8 +11,10 @@ public class Application {
 		Client c = new Client();
 		c.clientFunction(TCPMsg);
 	}
-	public void read(){	
-		
+	public void read(Message msg){	
+		String TCPMsg = msg.operation;
+		Client c = new Client();
+		c.clientFunction(TCPMsg);
 	}
 	public void fail(){
 		System.out.println("Begin fail process");
@@ -42,7 +44,8 @@ public class Application {
 			Message newMessage = new Message("post", microBlog);
 			post(newMessage);
 		}else if(ReadMatcher.matches()){
-			read();
+			Message newMessage = new Message("read", null);
+			read(newMessage);
 		}else if(FailMatcher.matches()){
 			fail();
 		}else if(UnfailMatcher.matches()){
