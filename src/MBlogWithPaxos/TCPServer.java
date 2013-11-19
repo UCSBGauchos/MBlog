@@ -9,6 +9,8 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.regex.Pattern;
 
+//TCP server, when it get the post command from the application, it will run paxos consensus protocol and decide what value 
+//can be written to the next log.
 public class TCPServer {
 	public void serverFunction(){
 		ServerSocket server = null;
@@ -38,8 +40,12 @@ public class TCPServer {
 		    		}else if(str.substring(0,4).equals("read")){
 		    			String returnMsg="";
 		    			for(String blog: localRep.log){
-		    				returnMsg+=blog;
+		    				String patternBlog = blog+":";
+		    				returnMsg+=patternBlog;
 				    	}
+		    			if(!returnMsg.equals("")){
+		    				returnMsg = returnMsg.substring(0, returnMsg.length()-1);
+		    			}
 		    			out.writeUTF(returnMsg);
 		    		}else if(str.equals("prepare")){
 		    			System.out.println("prepare after post!");
