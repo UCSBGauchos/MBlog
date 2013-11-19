@@ -27,16 +27,12 @@ public class TCPServer {
 	    		socket = server.accept();
 		    	in = new DataInputStream(socket.getInputStream());
 		    	out = new DataOutputStream(socket.getOutputStream());
+		    	System.out.println("The client is "+socket.getInetAddress().getHostAddress());
 		    	String str = in.readUTF();
 		    	if(str!=null){
 		    		if(str.substring(0, 4).equals("post")){
 		    			String recvMicroBlog = str.substring(5);
 				    	localRep.log.add(recvMicroBlog);
-//				    	System.out.println("Now the local log has "+localRep.log.size()+" blogs");
-//				    	for(String blog: localRep.log){
-//				    		System.out.print(blog+" ");
-//				    	}
-//				    	System.out.println();
 				    	String returnMsg = "SUCCESS";
 				    	out.writeUTF(returnMsg);
 		    		}else if(str.substring(0,4).equals("read")){
@@ -45,6 +41,8 @@ public class TCPServer {
 		    				returnMsg+=blog;
 				    	}
 		    			out.writeUTF(returnMsg);
+		    		}else if(str.equals("prepare")){
+		    			System.out.println("prepare after post!");
 		    		}
 		    	}
 		    	
