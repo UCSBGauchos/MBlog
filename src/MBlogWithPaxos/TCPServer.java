@@ -29,11 +29,15 @@ public class TCPServer {
 	    		socket = server.accept();
 		    	in = new DataInputStream(socket.getInputStream());
 		    	out = new DataOutputStream(socket.getOutputStream());
-		    	System.out.println("The client is "+socket.getInetAddress().getHostAddress());
+		    	//System.out.println("The client is "+socket.getInetAddress().getHostAddress());
 		    	String str = in.readUTF();
 		    	if(str!=null){
 		    		if(str.substring(0, 4).equals("post")){
 		    			String recvMicroBlog = str.substring(5);
+		    			//should start a new thread 
+		    			//String TCPMsg = "prepare";
+		    		    new Thread(new Paxos()).start();
+		    			//p.PaxosInstance("127.0.0.1", TCPMsg);
 				    	localRep.log.add(recvMicroBlog);
 				    	String returnMsg = "SUCCESS";
 				    	out.writeUTF(returnMsg);
@@ -48,7 +52,7 @@ public class TCPServer {
 		    			}
 		    			out.writeUTF(returnMsg);
 		    		}else if(str.equals("prepare")){
-		    			System.out.println("prepare after post!");
+		    			System.out.println("Send prepare after post!");
 		    		}
 		    	}
 		    	

@@ -8,21 +8,25 @@ import java.util.regex.Pattern;
 public class Application {
 	
 	//call client function, which is used to send msg to replication. Only need to send to local machine
+	//post command to the server
 	public void post(Message msg){
 		String TCPMsg = msg.MSGKeyWord+' '+msg.MSGContent;
 		Client c = new Client();
 		String result = c.clientFunction(msg.destIP, TCPMsg);
 		System.out.println(result);
 	}
+	//read command to the server
 	public void read(Message msg){	
 		String TCPMsg = msg.MSGKeyWord;
 		Client c = new Client();
 		String result = c.clientFunction(msg.destIP, TCPMsg);
 		System.out.println(result);
 	}
+	//fail
 	public void fail(){
 		System.out.println("Begin fail process");
 	}
+	//unfail
 	public void unfail(){
 		System.out.println("Begin unfail process");
 	}
@@ -45,7 +49,7 @@ public class Application {
 		//get source IP address
 		String sourceIP = null;
 		try {
-		    java.net.InetAddress ipAddress   =   java.net.InetAddress.getByName("localhost");
+		    java.net.InetAddress ipAddress = java.net.InetAddress.getByName("localhost");
 		    sourceIP = ipAddress.getLocalHost().getHostAddress();
 		} catch (UnknownHostException e) {
 		        e.printStackTrace();
