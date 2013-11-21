@@ -17,7 +17,7 @@ public class PaxosPrepare implements Runnable {
 			Socket socket = new Socket("0.0.0.0", 7777);
 			DataInputStream in = new DataInputStream(socket.getInputStream());
 			DataOutputStream out = new DataOutputStream(socket.getOutputStream());  
-			String TCPMsg = "prepare "+sendBal.balNumber+" "+sendBal.PID;
+			String TCPMsg = "prepare|"+sendBal.balNumber+"|"+sendBal.PID;
 			out.writeUTF(TCPMsg);
 		}
 		catch(IOException e){

@@ -16,6 +16,7 @@ public class Replication {
 	BallotNum promisBal;
 	BallotNum accBal;
 	String accValue;
+	int recvAckCount;
 	
 	
 	public Replication() {
@@ -23,6 +24,7 @@ public class Replication {
 		this.promisBal = new BallotNum(0,0);
 		this.accBal = new BallotNum(0,0);
 		this.accValue = null;
+		this.recvAckCount = 0;
 	}
 
 	public static void main(String [] args){

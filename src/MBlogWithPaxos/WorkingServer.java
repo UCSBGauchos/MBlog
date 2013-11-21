@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 
+//can recv: post, read, fail ,unfail, prepare, ack, accept,decide
 public class WorkingServer implements Runnable  {
 	
 	Socket socket;
@@ -26,8 +27,8 @@ public class WorkingServer implements Runnable  {
 	    	if(str!=null){
 	    		if(str.substring(0, 4).equals("post")){
 	    			String recvMicroBlog = str.substring(5);
-	    			BallotNum sendBal = new BallotNum(localRep.promisBal.balNumber+1, localRep.promisBal.PID);//create the new balNum
-	    		    new Thread(new PaxosPrepare(sendBal)).start();
+	    			localRep.promisBal.balNumber++;
+	    		    new Thread(new PaxosPrepare(localRep.promisBal)).start();
 			    	localRep.log.add(recvMicroBlog);
 			    	String returnMsg = "SUCCESS";
 			    	out.writeUTF(returnMsg);
@@ -42,7 +43,24 @@ public class WorkingServer implements Runnable  {
 	    			}
 	    			out.writeUTF(returnMsg);
 	    		}else if(str.substring(0, 7).equals("prepare")){
-	    			System.out.println(str);
+	    			String sendMsg = str.substring(8);
+	    			Common commonFunc = new Common();
+	    			if(commonFunc.isBalBigger(sendMsg, localRep.promisBal)){
+	    				System.out.println("Send is bigger than promise, should return ack");
+	    				localRep.promisBal.balNumber = commonFunc.getPromiseNum(sendMsg);
+	    				localRep.promisBal.PID = commonFunc.getPromisePID(sendMsg);
+	    				String TCPMsg = "ack|"+localRep.promisBal.balNumber+"|"+localRep.promisBal.PID+"|"+localRep.accBal.balNumber+"|"+localRep.accBal.PID+"!"+localRep.accValue;
+	    				out.writeUTF(TCPMsg);
+	    			}else{
+	    				System.out.println("Send is not bigger than promise, should not return ack");
+	    			}
+	    		}else if(str.substring(0,3).equals("ack")){
+	    			localRep.recvAckCount++;
+	    			//first assume there are just one node in the system, so the majority is 1
+	    			//majority case
+	    			if(localRep.recvAckCount>0){
+	    				//call another thread to send accept msg to all threads
+	    			}
 	    		}
 	    	}
 		} catch (IOException e) {
