@@ -12,10 +12,16 @@ import java.util.regex.Pattern;
 //TCP server, when it get the post command from the application, it will run paxos consensus protocol and decide what value 
 //can be written to the next log.
 public class TCPServer {
+	
+	 Replication localRep;
+	
+	public TCPServer(Replication _localRep){
+		this.localRep = _localRep;
+	}
+	
 	public void serverFunction(){
 		ServerSocket server = null;
 		Socket socket = null;
-	    Replication localRep = new Replication();
 	    try{
             server=new ServerSocket(7777);
 	    }

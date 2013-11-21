@@ -8,8 +8,8 @@ import java.net.Socket;
 
 public class WorkingServer implements Runnable  {
 	
-	public Socket socket;
-	public Replication localRep;
+	Socket socket;
+	Replication localRep;
 	WorkingServer(Socket s, Replication log){
 		this.socket = s;
 		this.localRep = log;
@@ -26,10 +26,8 @@ public class WorkingServer implements Runnable  {
 	    	if(str!=null){
 	    		if(str.substring(0, 4).equals("post")){
 	    			String recvMicroBlog = str.substring(5);
-	    			//should start a new thread 
-	    			//String TCPMsg = "prepare";
-	    		    new Thread(new Paxos()).start();
-	    			//p.PaxosInstance("127.0.0.1", TCPMsg);
+	    			BallotNum sendBal = new BallotNum(localRep.promisBal.balNumber+1, localRep.promisBal.PID);//create the new balNum
+	    		    new Thread(new PaxosPrepare(sendBal)).start();
 			    	localRep.log.add(recvMicroBlog);
 			    	String returnMsg = "SUCCESS";
 			    	out.writeUTF(returnMsg);
@@ -43,8 +41,8 @@ public class WorkingServer implements Runnable  {
 	    				returnMsg = returnMsg.substring(0, returnMsg.length()-1);
 	    			}
 	    			out.writeUTF(returnMsg);
-	    		}else if(str.equals("prepare")){
-	    			System.out.println("Send prepare after post!");
+	    		}else if(str.substring(0, 7).equals("prepare")){
+	    			System.out.println(str);
 	    		}
 	    	}
 		} catch (IOException e) {
