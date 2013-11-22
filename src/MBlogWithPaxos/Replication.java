@@ -1,6 +1,8 @@
 package MBlogWithPaxos;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.Queue;
 import java.util.Scanner;
 
 
@@ -12,7 +14,7 @@ import java.util.Scanner;
 
 public class Replication {
 	
-	ArrayList<String> log;
+	Queue<String> cacheLog = new LinkedList<String>();
 	BallotNum promisBal;
 	BallotNum accBal;
 	String accValue;
@@ -21,7 +23,7 @@ public class Replication {
 	
 	
 	public Replication() {
-		this.log = new ArrayList<String>();
+		this.cacheLog = new LinkedList<String>();
 		this.promisBal = new BallotNum(0,0);
 		this.accBal = new BallotNum(0,0);
 		this.accValue = null;

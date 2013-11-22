@@ -32,12 +32,12 @@ public class WorkingServer implements Runnable  {
 	    			String recvMicroBlog = str.substring(5);
 	    			localRep.promisBal.balNumber++;
 	    		    new Thread(new PaxosPrepare(localRep)).start();
-			    	localRep.log.add(recvMicroBlog);
+			    	localRep.cacheLog.add(recvMicroBlog);
 			    	String returnMsg = "SUCCESS";
 			    	out.writeUTF(returnMsg);
 	    		}else if(str.substring(0,4).equals("read")){
 	    			String returnMsg="";
-	    			for(String blog: localRep.log){
+	    			for(String blog: localRep.cacheLog){
 	    				String patternBlog = blog+":";
 	    				returnMsg+=patternBlog;
 			    	}
@@ -66,12 +66,33 @@ public class WorkingServer implements Runnable  {
 	    			String ackContent = str.substring(4);
 	    			localRep.allAckMsg.add(ackContent);
 	    			if(localRep.recvAckCount>0){
+	    				String myValue = null;
+	    				int maxAccNum = 0;
+	    				int maxAccPID = 0;
+	    				//traverse all the majority, get the value with the bigest if it is not null, else use ite own
 	    				for(String ackStr: localRep.allAckMsg){
 	    					String accValue = commonFunc.getAccValue(ackStr);
+	    					if(accValue.equals("null")){
+	    						accValue = null;
+	    					}
 	    					int accNumber = commonFunc.getAccNum(ackStr);
 	    					int accPID = commonFunc.getAccPID(ackStr);
-	    					System.out.println(accValue+accNumber+accPID);
+//	    					here just for testing, in the real environment, it should be unique
+	    					if(accValue!=null){
+	    						if(accNumber>=maxAccNum){
+	    							maxAccNum = accNumber;
+	    							myValue = accValue;
+	    						}else if(accPID>=maxAccPID){
+	    							maxAccPID = accPID;
+	    							myValue = accValue;
+	    						}
+	    					}
 	    				}
+	    				if(myValue == null){
+	    					myValue = localRep.cacheLog.peek();
+	    				}
+	    				System.out.println("send value is "+myValue);
+	    				new Thread(new PaxosAccept(myValue, localRep)).start();
 	    			}
 	    		}
 	    	}
