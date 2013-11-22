@@ -59,6 +59,20 @@ public class WorkingServer implements Runnable  {
 	    				System.out.println("Send is not bigger than promise, should not return ack");
 	    				String TCPMsg = "deny";
 	    			}
+	    		}else if(str.substring(0,3).equals("ack")){
+	    			Common commonFunc = new Common();
+	    			localRep.recvAckCount++;
+	    			//majority, for this case, just use one
+	    			String ackContent = str.substring(4);
+	    			localRep.allAckMsg.add(ackContent);
+	    			if(localRep.recvAckCount>0){
+	    				for(String ackStr: localRep.allAckMsg){
+	    					String accValue = commonFunc.getAccValue(ackStr);
+	    					int accNumber = commonFunc.getAccNum(ackStr);
+	    					int accPID = commonFunc.getAccPID(ackStr);
+	    					System.out.println(accValue+accNumber+accPID);
+	    				}
+	    			}
 	    		}
 	    	}
 		} catch (IOException e) {

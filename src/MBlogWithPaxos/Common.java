@@ -39,6 +39,26 @@ public class Common {
 		return souceIP;
 	}
 	
+	public String getAccValue(String sendBalInMsg){
+		String [] messageElements = sendBalInMsg.split("\\|");
+		String value = messageElements[4];
+		return value;
+	}
+	
+	public int getAccNum(String sendBalInMsg){
+		String [] messageElements = sendBalInMsg.split("\\|");
+		int sendPID = stringToInt(messageElements[2]);
+		return sendPID;
+	}
+	
+	public int getAccPID(String sendBalInMsg){
+		String [] messageElements = sendBalInMsg.split("\\|");
+		int sendPID = stringToInt(messageElements[3]);
+		return sendPID;
+	}
+	
+	
+	
 	public int stringToInt(String str){
 		int number = 0;
 		for(int i=0; i<str.length(); i++){

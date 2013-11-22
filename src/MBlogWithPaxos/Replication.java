@@ -17,6 +17,7 @@ public class Replication {
 	BallotNum accBal;
 	String accValue;
 	int recvAckCount;
+	ArrayList<String> allAckMsg;
 	
 	
 	public Replication() {
@@ -25,6 +26,7 @@ public class Replication {
 		this.accBal = new BallotNum(0,0);
 		this.accValue = null;
 		this.recvAckCount = 0;
+		this.allAckMsg = new ArrayList<String>();
 	}
 
 	public static void main(String [] args){
