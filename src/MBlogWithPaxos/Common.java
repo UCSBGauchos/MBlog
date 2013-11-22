@@ -33,6 +33,12 @@ public class Common {
 		return sendNumber;
 	}
 	
+	public String getSouceIP(String sendBalInMsg){
+		String [] messageElements = sendBalInMsg.split("\\|");
+		String souceIP = messageElements[2];
+		return souceIP;
+	}
+	
 	public int stringToInt(String str){
 		int number = 0;
 		for(int i=0; i<str.length(); i++){

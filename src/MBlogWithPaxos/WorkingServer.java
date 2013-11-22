@@ -25,6 +25,7 @@ public class WorkingServer implements Runnable  {
 			out = new DataOutputStream(socket.getOutputStream());
 			String str = in.readUTF();
 			//for testing what msg has been recved
+			//here we have diff ths for prepare, ack, accept and decide
 			System.out.println("Recv "+str);
 	    	if(str!=null){
 	    		if(str.substring(0, 4).equals("post")){
@@ -52,7 +53,8 @@ public class WorkingServer implements Runnable  {
 	    				System.out.println("Send is bigger than promise, should return ack");
 	    				localRep.promisBal.balNumber = commonFunc.getPromiseNum(sendMsg);
 	    				localRep.promisBal.PID = commonFunc.getPromisePID(sendMsg);
-	    				String TCPMsg = "ack|"+localRep.promisBal.balNumber+"|"+localRep.promisBal.PID+"|"+localRep.accBal.balNumber+"|"+localRep.accBal.PID+"|"+localRep.accValue;
+	    				String souceIP = commonFunc.getSouceIP(sendMsg);
+	    				new Thread(new PaxosAck(souceIP, localRep)).start();
 	    			}else{
 	    				System.out.println("Send is not bigger than promise, should not return ack");
 	    				String TCPMsg = "deny";
