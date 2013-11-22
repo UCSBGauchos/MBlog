@@ -1,5 +1,7 @@
 package MBlogWithPaxos;
 
+import java.net.UnknownHostException;
+
 //Some useful function for this project
 public class Common {
 	public boolean isBalBigger(String sendBalInMsg, BallotNum localBal){
@@ -12,6 +14,8 @@ public class Common {
 			return true;
 		}else if(sendNumber==localNumber&&sendPID>localPID){
 			return true;
+		}else if(sendNumber==localNumber&&sendPID==localPID){
+			return true; // this equal is just for one machine testing! (should be removed in real project)
 		}else{
 			return false;
 		}
@@ -36,4 +40,16 @@ public class Common {
 		}
 		return number;
 	}
+	
+	public String getLocalIPAddress(){
+		String sourceIP = null;
+		try {
+		    java.net.InetAddress ipAddress = java.net.InetAddress.getByName("localhost");
+		    sourceIP = ipAddress.getLocalHost().getHostAddress();
+		} catch (UnknownHostException e) {
+		        e.printStackTrace();
+		}
+		return sourceIP;
+	}
+			
 }

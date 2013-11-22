@@ -46,23 +46,16 @@ public class Application {
 		Matcher FailMatcher = FailPattern.matcher(inputCommand);
 		Matcher UnfailMatcher = UnfailPattern.matcher(inputCommand);
 		
-		//get source IP address
-		String sourceIP = null;
-		try {
-		    java.net.InetAddress ipAddress = java.net.InetAddress.getByName("localhost");
-		    sourceIP = ipAddress.getLocalHost().getHostAddress();
-		} catch (UnknownHostException e) {
-		        e.printStackTrace();
-		}
+		Common commonFunc = new Common();
 		
 		
 		if(PostMatcher.matches()){
 			String[] result = PostSplitPattern.split(inputCommand);
 			String microBlog = result[1];
-			Message newMessage = new Message("post", microBlog, sourceIP, "127.0.0.1", null, null, 0, 0);
+			Message newMessage = new Message("post", microBlog, commonFunc.getLocalIPAddress(), "127.0.0.1", null, null, 0, 0);
 			post(newMessage);
 		}else if(ReadMatcher.matches()){
-			Message newMessage = new Message("read", null, sourceIP, "127.0.0.1", null, null, 0, 0);
+			Message newMessage = new Message("read", null, commonFunc.getLocalIPAddress(), "127.0.0.1", null, null, 0, 0);
 			read(newMessage);
 		}else if(FailMatcher.matches()){
 			fail();

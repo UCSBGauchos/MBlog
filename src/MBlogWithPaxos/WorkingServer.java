@@ -24,11 +24,13 @@ public class WorkingServer implements Runnable  {
 			in = new DataInputStream(socket.getInputStream());
 			out = new DataOutputStream(socket.getOutputStream());
 			String str = in.readUTF();
+			//for testing what msg has been recved
+			System.out.println("Recv "+str);
 	    	if(str!=null){
 	    		if(str.substring(0, 4).equals("post")){
 	    			String recvMicroBlog = str.substring(5);
 	    			localRep.promisBal.balNumber++;
-	    		    new Thread(new PaxosPrepare(localRep.promisBal)).start();
+	    		    new Thread(new PaxosPrepare(localRep)).start();
 			    	localRep.log.add(recvMicroBlog);
 			    	String returnMsg = "SUCCESS";
 			    	out.writeUTF(returnMsg);
@@ -45,21 +47,15 @@ public class WorkingServer implements Runnable  {
 	    		}else if(str.substring(0, 7).equals("prepare")){
 	    			String sendMsg = str.substring(8);
 	    			Common commonFunc = new Common();
+	    			//here just for testing (equal also can send back ack). In the real project, it should be unique
 	    			if(commonFunc.isBalBigger(sendMsg, localRep.promisBal)){
 	    				System.out.println("Send is bigger than promise, should return ack");
 	    				localRep.promisBal.balNumber = commonFunc.getPromiseNum(sendMsg);
 	    				localRep.promisBal.PID = commonFunc.getPromisePID(sendMsg);
-	    				String TCPMsg = "ack|"+localRep.promisBal.balNumber+"|"+localRep.promisBal.PID+"|"+localRep.accBal.balNumber+"|"+localRep.accBal.PID+"!"+localRep.accValue;
-	    				out.writeUTF(TCPMsg);
+	    				String TCPMsg = "ack|"+localRep.promisBal.balNumber+"|"+localRep.promisBal.PID+"|"+localRep.accBal.balNumber+"|"+localRep.accBal.PID+"|"+localRep.accValue;
 	    			}else{
 	    				System.out.println("Send is not bigger than promise, should not return ack");
-	    			}
-	    		}else if(str.substring(0,3).equals("ack")){
-	    			localRep.recvAckCount++;
-	    			//first assume there are just one node in the system, so the majority is 1
-	    			//majority case
-	    			if(localRep.recvAckCount>0){
-	    				//call another thread to send accept msg to all threads
+	    				String TCPMsg = "deny";
 	    			}
 	    		}
 	    	}
