@@ -21,6 +21,8 @@ public class PaxosAccept implements Runnable{
 			DataInputStream in = new DataInputStream(socket.getInputStream());
 			DataOutputStream out = new DataOutputStream(socket.getOutputStream());  
 			String TCPMsg = "accept|"+localRep.promisBal.balNumber+"|"+localRep.promisBal.PID+"|"+myValue;
+			//only the first time need to send accept broadcase
+			localRep.firstTimeSendAcc = false;
 			out.writeUTF(TCPMsg);
 		}
 		catch(IOException e){

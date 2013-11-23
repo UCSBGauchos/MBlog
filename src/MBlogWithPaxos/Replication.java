@@ -14,21 +14,41 @@ import java.util.Scanner;
 
 public class Replication {
 	
-	Queue<String> cacheLog = new LinkedList<String>();
+	Queue<String> cacheLog;
+	Queue<String> log;
 	BallotNum promisBal;
 	BallotNum accBal;
 	String accValue;
 	int recvAckCount;
+	int recvAccCount;
 	ArrayList<String> allAckMsg;
+	Boolean firstTimeSendAcc;
+	Boolean isDecided;
 	
 	
 	public Replication() {
 		this.cacheLog = new LinkedList<String>();
+		this.log = new LinkedList<String>();
 		this.promisBal = new BallotNum(0,0);
 		this.accBal = new BallotNum(0,0);
 		this.accValue = null;
 		this.recvAckCount = 0;
+		this.recvAccCount = 0;
 		this.allAckMsg = new ArrayList<String>();
+		this.firstTimeSendAcc = true;
+		this.isDecided = false;
+	}
+	
+	//to start a new instance, need to initial the node except the log
+	public void initialForNewPaxosInstance(){
+		this.promisBal = new BallotNum(0,0);
+		this.accBal = new BallotNum(0,0);
+		this.accValue = null;
+		this.recvAckCount = 0;
+		this.recvAccCount = 0;
+		this.allAckMsg = new ArrayList<String>();
+		this.firstTimeSendAcc = true;
+		this.isDecided = false;
 	}
 
 	public static void main(String [] args){

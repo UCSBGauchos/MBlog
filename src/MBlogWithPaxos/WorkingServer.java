@@ -37,7 +37,7 @@ public class WorkingServer implements Runnable  {
 			    	out.writeUTF(returnMsg);
 	    		}else if(str.substring(0,4).equals("read")){
 	    			String returnMsg="";
-	    			for(String blog: localRep.cacheLog){
+	    			for(String blog: localRep.log){
 	    				String patternBlog = blog+":";
 	    				returnMsg+=patternBlog;
 			    	}
@@ -93,6 +93,46 @@ public class WorkingServer implements Runnable  {
 	    				}
 	    				System.out.println("send value is "+myValue);
 	    				new Thread(new PaxosAccept(myValue, localRep)).start();
+	    			}
+	    		}else if(str.substring(0,6).equals("accept")){
+	    			Common commonFunc = new Common();
+	    			String acceptContent = str.substring(7);
+	    			int sendBalNum = commonFunc.getPromiseNum(acceptContent);
+	    			int sendBalPID = commonFunc.getPromisePID(acceptContent);
+	    			int sendPID = commonFunc.getPromisePID(acceptContent);
+	    			String sendValue = commonFunc.getSendValue(acceptContent);
+	    			localRep.recvAccCount++;
+	    			if(sendBalNum>=localRep.promisBal.balNumber){
+	    				//update its local acc bal and acc number
+	    				localRep.promisBal.balNumber = sendBalNum;
+	    				localRep.promisBal.PID = sendPID;
+	    				localRep.accValue = sendValue;
+	    			}
+	    			if(localRep.firstTimeSendAcc == true){
+	    				new Thread(new PaxosAccept(localRep.accValue, localRep)).start();
+	    				localRep.firstTimeSendAcc = false;
+	    			}
+	    			//accept from majority, here for testing, just need to be one
+	    			//decide v and start decide thread
+	    			if(localRep.recvAccCount>0){
+	    				System.out.println("decide "+sendValue);
+	    				localRep.isDecided = true;
+	    				localRep.log.add(sendValue);
+	    				if(localRep.cacheLog.peek().equals(sendValue)){
+	    					System.out.println("Remove "+localRep.cacheLog.poll()+" in cache");
+	    				}
+	    				new Thread(new PaxosDecide(sendValue)).start();
+	    			}
+	    		}else if(str.substring(0,6).equals("decide")){
+	    			String decideValue = str.substring(7);
+	    			if(localRep.isDecided == false){
+	    				System.out.println("has not decided");
+	    				System.out.println("decide "+decideValue);
+	    				localRep.isDecided = true;
+	    				localRep.log.add(decideValue);
+	    				if(localRep.cacheLog.peek().equals(decideValue)){
+	    					System.out.println("Remove "+localRep.cacheLog.poll()+" in cache");
+	    				}
 	    			}
 	    		}
 	    	}

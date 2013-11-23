@@ -57,6 +57,12 @@ public class Common {
 		return sendPID;
 	}
 	
+	public String getSendValue(String sendBalInMsg){
+		String [] messageElements = sendBalInMsg.split("\\|");
+		String sendValue= messageElements[2];
+		return sendValue;
+	}
+	
 	
 	
 	public int stringToInt(String str){
