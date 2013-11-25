@@ -16,8 +16,8 @@ public class Replication {
 	
 	int paxosInstance;
 	Queue<String> cacheLog;
-	ArrayList<String> log;
-	ArrayList<PaxosVariables> paxosHistory;
+	String [] log ;
+	PaxosVariables [] paxosHistory;
 	
 	
 	
@@ -25,8 +25,8 @@ public class Replication {
 	public Replication() {
 		this.paxosInstance = 0;
 		this.cacheLog = new LinkedList<String>();
-		this.log = new ArrayList<String>();
-		this.paxosHistory = new ArrayList<PaxosVariables>();
+		this.log = new String [500];
+		this.paxosHistory = new PaxosVariables [500];
 	}
 	
 //	//to start a new instance, need to initial the node except the log

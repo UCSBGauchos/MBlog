@@ -22,9 +22,9 @@ public class PaxosAccept implements Runnable{
 			Socket socket = new Socket("0.0.0.0", 7777);
 			DataInputStream in = new DataInputStream(socket.getInputStream());
 			DataOutputStream out = new DataOutputStream(socket.getOutputStream());  
-			String TCPMsg = paxosInstance+"|accept|"+localRep.paxosHistory.get(paxosInstance).promiseBal.balNumber+"|"+localRep.paxosHistory.get(paxosInstance).promiseBal.PID+"|"+myValue;
+			String TCPMsg = paxosInstance+"|accept|"+localRep.paxosHistory[paxosInstance].promiseBal.balNumber+"|"+localRep.paxosHistory[paxosInstance].promiseBal.PID+"|"+myValue;
 			//only the first time need to send accept broadcase
-			localRep.paxosHistory.get(paxosInstance).firstTimeSendAcc = false;
+			localRep.paxosHistory[paxosInstance].firstTimeSendAcc = false;
 			out.writeUTF(TCPMsg);
 		}
 		catch(IOException e){

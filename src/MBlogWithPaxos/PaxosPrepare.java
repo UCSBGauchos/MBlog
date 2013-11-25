@@ -19,7 +19,7 @@ public class PaxosPrepare implements Runnable {
 			Socket socket = new Socket("0.0.0.0", 7777);
 			DataInputStream in = new DataInputStream(socket.getInputStream());
 			DataOutputStream out = new DataOutputStream(socket.getOutputStream());  
-			String TCPMsg = localRep.paxosInstance+"|prepare|"+localRep.paxosHistory.get(localRep.paxosInstance).promiseBal.balNumber+"|"+localRep.paxosHistory.get(localRep.paxosInstance).promiseBal.PID+"|"+commonFunc.getLocalIPAddress();
+			String TCPMsg = localRep.paxosInstance+"|prepare|"+localRep.paxosHistory[localRep.paxosInstance].promiseBal.balNumber+"|"+localRep.paxosHistory[localRep.paxosInstance].promiseBal.PID+"|"+commonFunc.getLocalIPAddress();
 			out.writeUTF(TCPMsg);
 			
 		}

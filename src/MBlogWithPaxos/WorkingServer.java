@@ -35,8 +35,12 @@ public class WorkingServer implements Runnable  {
 	    			String recvMicroBlog = str.substring(5);
 	    			localRep.cacheLog.add(recvMicroBlog);
 	    			//initial all the paxos variables in the local instance(local instance)
-	    			localRep.paxosHistory.add(localRep.paxosInstance, new PaxosVariables());
-	    			localRep.paxosHistory.get(localRep.paxosInstance).promiseBal.balNumber++;
+	    			//just make sure that this location is not decided by majority. If it is decided, just skip it
+	    			while(localRep.log[localRep.paxosInstance] != null){
+	    				localRep.paxosInstance++;
+	    			}
+	    			localRep.paxosHistory[localRep.paxosInstance] = new PaxosVariables();
+	    			localRep.paxosHistory[localRep.paxosInstance].promiseBal.balNumber++;
 	    		    new Thread(new PaxosPrepare(localRep)).start();
 			    	String returnMsg = "SUCCESS";
 			    	out.writeUTF(returnMsg);
@@ -55,11 +59,15 @@ public class WorkingServer implements Runnable  {
 	    			int paxosInstance = commonFunc.getPaxosInstanceNumber(str);
 	    			String sendMsg = str.substring(10);
 	    			System.out.println("Now the paxos instance is "+paxosInstance);
+	    			if(localRep.paxosHistory[paxosInstance] == null){
+	    				System.out.println("It is null, need to create a new one!");
+	    				localRep.paxosHistory[paxosInstance] = new PaxosVariables();
+	    			}
 	    			//here just for testing (equal also can send back ack). In the real project, it should be unique
-	    			if(commonFunc.isBalBigger(sendMsg, localRep.paxosHistory.get(paxosInstance).promiseBal)){
+	    			if(commonFunc.isBalBigger(sendMsg, localRep.paxosHistory[paxosInstance].promiseBal)){
 	    				System.out.println("Send is bigger than promise, should return ack");
-	    				localRep.paxosHistory.get(paxosInstance).promiseBal.balNumber = commonFunc.getPromiseNum(sendMsg);
-	    				localRep.paxosHistory.get(paxosInstance).promiseBal.PID = commonFunc.getPromisePID(sendMsg);
+	    				localRep.paxosHistory[paxosInstance].promiseBal.balNumber = commonFunc.getPromiseNum(sendMsg);
+	    				localRep.paxosHistory[paxosInstance].promiseBal.PID = commonFunc.getPromisePID(sendMsg);
 	    				String souceIP = commonFunc.getSouceIP(sendMsg);
 	    				new Thread(new PaxosAck(paxosInstance, souceIP, localRep)).start();
 	    			}else{
@@ -70,16 +78,16 @@ public class WorkingServer implements Runnable  {
 	    			Common commonFunc = new Common();
 	    			int paxosInstance = commonFunc.getPaxosInstanceNumber(str);
 	    			System.out.println("Now the paxos instance is "+paxosInstance);
-	    			localRep.paxosHistory.get(paxosInstance).recvAckCount++;
+	    			localRep.paxosHistory[paxosInstance].recvAckCount++;
 	    			//majority, for this case, just use one
 	    			String ackContent = str.substring(6);
-	    			localRep.paxosHistory.get(paxosInstance).allAckMsg.add(ackContent);
-	    			if(localRep.paxosHistory.get(paxosInstance).recvAckCount>0){
+	    			localRep.paxosHistory[paxosInstance].allAckMsg.add(ackContent);
+	    			if(localRep.paxosHistory[paxosInstance].recvAckCount>0){
 	    				String myValue = null;
 	    				int maxAccNum = 0;
 	    				int maxAccPID = 0;
 	    				//traverse all the majority, get the value with the bigest if it is not null, else use ite own
-	    				for(String ackStr: localRep.paxosHistory.get(paxosInstance).allAckMsg){
+	    				for(String ackStr: localRep.paxosHistory[paxosInstance].allAckMsg){
 	    					String accValue = commonFunc.getAccValue(ackStr);
 	    					if(accValue.equals("null")){
 	    						accValue = null;
@@ -100,7 +108,7 @@ public class WorkingServer implements Runnable  {
 	    				//if no value received, need to propose my own value;
 	    				if(myValue == null){
 	    					myValue = localRep.cacheLog.peek();
-	    					localRep.paxosHistory.get(paxosInstance).needSendMyOwnValue = true;
+	    					localRep.paxosHistory[paxosInstance].needSendMyOwnValue = true;
 	    				}
 	    				System.out.println("send value is "+myValue);
 	    				new Thread(new PaxosAccept(paxosInstance, myValue, localRep)).start();
@@ -114,27 +122,27 @@ public class WorkingServer implements Runnable  {
 	    			int sendBalPID = commonFunc.getPromisePID(acceptContent);
 	    			int sendPID = commonFunc.getPromisePID(acceptContent);
 	    			String sendValue = commonFunc.getSendValue(acceptContent);
-	    			localRep.paxosHistory.get(paxosInstance).recvAccCount++;
-	    			if(sendBalNum>=localRep.paxosHistory.get(paxosInstance).promiseBal.balNumber){
+	    			localRep.paxosHistory[paxosInstance].recvAccCount++;
+	    			if(sendBalNum>=localRep.paxosHistory[paxosInstance].promiseBal.balNumber){
 	    				//update its local acc bal and acc number
-	    				localRep.paxosHistory.get(paxosInstance).promiseBal.balNumber = sendBalNum;
-	    				localRep.paxosHistory.get(paxosInstance).promiseBal.PID = sendPID;
-	    				localRep.paxosHistory.get(paxosInstance).acceptVal = sendValue;
+	    				localRep.paxosHistory[paxosInstance].promiseBal.balNumber = sendBalNum;
+	    				localRep.paxosHistory[paxosInstance].promiseBal.PID = sendPID;
+	    				localRep.paxosHistory[paxosInstance].acceptVal = sendValue;
 	    			}
 	    			//***************
-	    			if(localRep.paxosHistory.get(paxosInstance).firstTimeSendAcc == true){
+	    			if(localRep.paxosHistory[paxosInstance].firstTimeSendAcc == true){
 	    				System.out.println("Has never sent accept msg, so I will send it now!");
-	    				new Thread(new PaxosAccept(paxosInstance, localRep.paxosHistory.get(paxosInstance).acceptVal, localRep)).start();
+	    				new Thread(new PaxosAccept(paxosInstance, localRep.paxosHistory[paxosInstance].acceptVal, localRep)).start();
 	    			}
 	    			//accept from majority, here for testing, just need to be one
 	    			//decide v and start decide thread
 	    			//add it to the instance location of the log
-	    			if(localRep.paxosHistory.get(paxosInstance).recvAccCount>0){
+	    			if(localRep.paxosHistory[paxosInstance].recvAccCount>0){
 	    				System.out.println("decide "+sendValue);
-	    				localRep.paxosHistory.get(paxosInstance).isDecided = true;
-	    				localRep.log.add(localRep.paxosInstance, sendValue);
+	    				localRep.paxosHistory[paxosInstance].isDecided = true;
+	    				localRep.log[paxosInstance] = sendValue;
 	    				localRep.paxosInstance++;
-	    				if(localRep.paxosHistory.get(paxosInstance).needSendMyOwnValue == true){
+	    				if(localRep.paxosHistory[paxosInstance].needSendMyOwnValue == true){
 	    					//move the value from cache to the local log, means it is decided
 	    					System.out.println("Remove "+localRep.cacheLog.poll()+" in cache");
 	    				}
@@ -151,13 +159,13 @@ public class WorkingServer implements Runnable  {
 	    			int paxosInstance = commonFunc.getPaxosInstanceNumber(str);
 	    			System.out.println("Now the paxos instance is "+paxosInstance);
 	    			String decideValue = str.substring(9);
-	    			if(localRep.paxosHistory.get(paxosInstance).isDecided == false){
+	    			if(localRep.paxosHistory[paxosInstance].isDecided == false){
 	    				System.out.println("has not decided");
 	    				System.out.println("decide "+decideValue);
-	    				localRep.paxosHistory.get(paxosInstance).isDecided = true;
-	    				localRep.log.add(localRep.paxosInstance, decideValue);
+	    				localRep.paxosHistory[paxosInstance].isDecided = true;
+	    				localRep.log[paxosInstance] = decideValue;
 	    				localRep.paxosInstance++;
-	    				if(localRep.paxosHistory.get(paxosInstance).needSendMyOwnValue == true){
+	    				if(localRep.paxosHistory[paxosInstance].needSendMyOwnValue == true){
 	    					System.out.println("Remove "+localRep.cacheLog.poll()+" in cache");
 	    				}
 	    				if(localRep.cacheLog.size()!=0){

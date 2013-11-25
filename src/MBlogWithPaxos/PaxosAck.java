@@ -22,7 +22,7 @@ public class PaxosAck implements Runnable{
 			Socket socket = new Socket(souceIP, 7777);
 			DataInputStream in = new DataInputStream(socket.getInputStream());
 			DataOutputStream out = new DataOutputStream(socket.getOutputStream());
-			String TCPMsg = paxosInstance+"|ack|"+localRep.paxosHistory.get(paxosInstance).promiseBal.balNumber+"|"+localRep.paxosHistory.get(paxosInstance).promiseBal.PID+"|"+localRep.paxosHistory.get(paxosInstance).acceptBal.balNumber+"|"+localRep.paxosHistory.get(paxosInstance).acceptBal.PID+"|"+localRep.paxosHistory.get(paxosInstance).acceptVal;
+			String TCPMsg = paxosInstance+"|ack|"+localRep.paxosHistory[paxosInstance].promiseBal.balNumber+"|"+localRep.paxosHistory[paxosInstance].promiseBal.PID+"|"+localRep.paxosHistory[paxosInstance].acceptBal.balNumber+"|"+localRep.paxosHistory[paxosInstance].acceptBal.PID+"|"+localRep.paxosHistory[paxosInstance].acceptVal;
 			out.writeUTF(TCPMsg);
 		}
 		catch(IOException e){
