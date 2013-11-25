@@ -21,6 +21,12 @@ public class Common {
 		}
 	}
 	
+	public int getPaxosInstanceNumber(String sendBalInMsg){
+		String [] messageElements = sendBalInMsg.split("\\|");
+		int paxosInstanceNumber = stringToInt(messageElements[0]);
+		return paxosInstanceNumber;
+	}
+	
 	public int getPromiseNum(String sendBalInMsg){
 		String [] messageElements = sendBalInMsg.split("\\|");
 		int sendPID = stringToInt(messageElements[0]);

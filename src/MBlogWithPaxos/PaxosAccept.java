@@ -11,18 +11,20 @@ import java.net.Socket;
 public class PaxosAccept implements Runnable{
 	String myValue;
 	Replication localRep;
-	public PaxosAccept(String _myValue, Replication _localRep){
+	int paxosInstance;
+	public PaxosAccept(int _paxosInstance, String _myValue, Replication _localRep){
 		this.myValue = _myValue;
 		this.localRep = _localRep;
+		this.paxosInstance = _paxosInstance;
 	}
 	public void run(){
 		try{
 			Socket socket = new Socket("0.0.0.0", 7777);
 			DataInputStream in = new DataInputStream(socket.getInputStream());
 			DataOutputStream out = new DataOutputStream(socket.getOutputStream());  
-			String TCPMsg = "accept|"+localRep.promisBal.balNumber+"|"+localRep.promisBal.PID+"|"+myValue;
+			String TCPMsg = paxosInstance+"|accept|"+localRep.paxosHistory.get(paxosInstance).promiseBal.balNumber+"|"+localRep.paxosHistory.get(paxosInstance).promiseBal.PID+"|"+myValue;
 			//only the first time need to send accept broadcase
-			localRep.firstTimeSendAcc = false;
+			localRep.paxosHistory.get(paxosInstance).firstTimeSendAcc = false;
 			out.writeUTF(TCPMsg);
 		}
 		catch(IOException e){

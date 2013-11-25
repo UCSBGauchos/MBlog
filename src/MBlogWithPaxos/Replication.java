@@ -14,42 +14,32 @@ import java.util.Scanner;
 
 public class Replication {
 	
+	int paxosInstance;
 	Queue<String> cacheLog;
-	Queue<String> log;
-	BallotNum promisBal;
-	BallotNum accBal;
-	String accValue;
-	int recvAckCount;
-	int recvAccCount;
-	ArrayList<String> allAckMsg;
-	Boolean firstTimeSendAcc;
-	Boolean isDecided;
+	ArrayList<String> log;
+	ArrayList<PaxosVariables> paxosHistory;
+	
+	
 	
 	
 	public Replication() {
+		this.paxosInstance = 0;
 		this.cacheLog = new LinkedList<String>();
-		this.log = new LinkedList<String>();
-		this.promisBal = new BallotNum(0,0);
-		this.accBal = new BallotNum(0,0);
-		this.accValue = null;
-		this.recvAckCount = 0;
-		this.recvAccCount = 0;
-		this.allAckMsg = new ArrayList<String>();
-		this.firstTimeSendAcc = true;
-		this.isDecided = false;
+		this.log = new ArrayList<String>();
+		this.paxosHistory = new ArrayList<PaxosVariables>();
 	}
 	
-	//to start a new instance, need to initial the node except the log
-	public void initialForNewPaxosInstance(){
-		this.promisBal = new BallotNum(0,0);
-		this.accBal = new BallotNum(0,0);
-		this.accValue = null;
-		this.recvAckCount = 0;
-		this.recvAccCount = 0;
-		this.allAckMsg = new ArrayList<String>();
-		this.firstTimeSendAcc = true;
-		this.isDecided = false;
-	}
+//	//to start a new instance, need to initial the node except the log
+//	public void initialForNewPaxosInstance(){
+//		this.promisBal = new BallotNum(0,0);
+//		this.accBal = new BallotNum(0,0);
+//		this.accValue = null;
+//		this.recvAckCount = 0;
+//		this.recvAccCount = 0;
+//		this.allAckMsg = new ArrayList<String>();
+//		this.firstTimeSendAcc = true;
+//		this.isDecided = false;
+//	}
 
 	public static void main(String [] args){
 		Replication localRep = new Replication();

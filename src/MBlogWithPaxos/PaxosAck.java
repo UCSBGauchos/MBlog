@@ -11,16 +11,18 @@ import java.net.Socket;
 public class PaxosAck implements Runnable{
 	String souceIP;
 	Replication localRep;
-	public PaxosAck(String _souceIP, Replication _localRep){
+	int paxosInstance;
+	public PaxosAck(int _paxosInstance, String _souceIP, Replication _localRep){
 		this.souceIP = _souceIP;
 		this.localRep = _localRep;
+		this.paxosInstance = _paxosInstance;
 	}
 	public void run(){
 		try{
 			Socket socket = new Socket(souceIP, 7777);
 			DataInputStream in = new DataInputStream(socket.getInputStream());
 			DataOutputStream out = new DataOutputStream(socket.getOutputStream());
-			String TCPMsg = "ack|"+localRep.promisBal.balNumber+"|"+localRep.promisBal.PID+"|"+localRep.accBal.balNumber+"|"+localRep.accBal.PID+"|"+localRep.accValue;
+			String TCPMsg = paxosInstance+"|ack|"+localRep.paxosHistory.get(paxosInstance).promiseBal.balNumber+"|"+localRep.paxosHistory.get(paxosInstance).promiseBal.PID+"|"+localRep.paxosHistory.get(paxosInstance).acceptBal.balNumber+"|"+localRep.paxosHistory.get(paxosInstance).acceptBal.PID+"|"+localRep.paxosHistory.get(paxosInstance).acceptVal;
 			out.writeUTF(TCPMsg);
 		}
 		catch(IOException e){

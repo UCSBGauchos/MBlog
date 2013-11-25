@@ -10,6 +10,7 @@ public class Application {
 	//call client function, which is used to send msg to replication. Only need to send to local machine
 	//post command to the server
 	public void post(Message msg){
+		
 		String TCPMsg = msg.MSGKeyWord+' '+msg.MSGContent;
 		Client c = new Client();
 		String result = c.clientFunction(msg.destIP, TCPMsg);

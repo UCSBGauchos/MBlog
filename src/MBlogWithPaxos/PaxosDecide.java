@@ -8,17 +8,22 @@ import java.net.Socket;
 //Decide phase in paxos
 //This thread is for deciding the value
 //The msg should be "decide value"
+//after deciding the value, move to the next entrance
 public class PaxosDecide implements Runnable{
+	int paxosInstance;
 	String decideValue;
-	public PaxosDecide(String _decideValue){
+	Replication localRep;
+	public PaxosDecide(int _paxosInstance, String _decideValue, Replication _locaRep){
 		this.decideValue = _decideValue;
+		this.localRep = _locaRep;
+		this.paxosInstance = _paxosInstance;
 	}
 	public void run(){
 		try{
 			Socket socket = new Socket("0.0.0.0", 7777);
 			DataInputStream in = new DataInputStream(socket.getInputStream());
 			DataOutputStream out = new DataOutputStream(socket.getOutputStream());
-			String TCPMsg = "decide|"+decideValue;
+			String TCPMsg = paxosInstance+"|decide|"+decideValue;
 			out.writeUTF(TCPMsg);
 		}
 		catch(IOException e){
