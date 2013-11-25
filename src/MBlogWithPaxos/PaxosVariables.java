@@ -10,6 +10,7 @@ public class PaxosVariables {
 	int recvAccCount;
 	Boolean firstTimeSendAcc;
 	Boolean isDecided;
+	Boolean needSendMyOwnValue;
 	ArrayList<String> allAckMsg;
 	
 	
@@ -21,6 +22,7 @@ public class PaxosVariables {
 		this.recvAccCount = 0;
 		this.firstTimeSendAcc = true;
 		this.isDecided = false;
+		this.needSendMyOwnValue = false;
 		this.allAckMsg = new ArrayList<String>();
 	}
 }

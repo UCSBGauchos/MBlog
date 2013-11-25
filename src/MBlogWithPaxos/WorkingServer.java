@@ -6,7 +6,8 @@ import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 
-//can recv: post, read, fail ,unfail, prepare, ack, accept,decide
+//This is the main thread to handle different socket request. It means that the rep server can handle
+//different 
 public class WorkingServer implements Runnable  {
 	
 	Socket socket;
@@ -32,11 +33,11 @@ public class WorkingServer implements Runnable  {
 	    		//store each paxos's instance's paxos variables in the paxos history log
 	    		if(str.substring(0, 4).equals("post")){
 	    			String recvMicroBlog = str.substring(5);
-	    			//localRep.promisBal.balNumber++;
+	    			localRep.cacheLog.add(recvMicroBlog);
+	    			//initial all the paxos variables in the local instance(local instance)
 	    			localRep.paxosHistory.add(localRep.paxosInstance, new PaxosVariables());
 	    			localRep.paxosHistory.get(localRep.paxosInstance).promiseBal.balNumber++;
 	    		    new Thread(new PaxosPrepare(localRep)).start();
-			    	localRep.cacheLog.add(recvMicroBlog);
 			    	String returnMsg = "SUCCESS";
 			    	out.writeUTF(returnMsg);
 	    		}else if(str.substring(0,4).equals("read")){
@@ -96,9 +97,10 @@ public class WorkingServer implements Runnable  {
 	    						}
 	    					}
 	    				}
-	    				//if no value received, use its own value in the cache to post
+	    				//if no value received, need to propose my own value;
 	    				if(myValue == null){
 	    					myValue = localRep.cacheLog.peek();
+	    					localRep.paxosHistory.get(paxosInstance).needSendMyOwnValue = true;
 	    				}
 	    				System.out.println("send value is "+myValue);
 	    				new Thread(new PaxosAccept(paxosInstance, myValue, localRep)).start();
@@ -132,24 +134,34 @@ public class WorkingServer implements Runnable  {
 	    				localRep.paxosHistory.get(paxosInstance).isDecided = true;
 	    				localRep.log.add(localRep.paxosInstance, sendValue);
 	    				localRep.paxosInstance++;
-	    				if(localRep.cacheLog.peek().equals(sendValue)){
+	    				if(localRep.paxosHistory.get(paxosInstance).needSendMyOwnValue == true){
+	    					//move the value from cache to the local log, means it is decided
 	    					System.out.println("Remove "+localRep.cacheLog.poll()+" in cache");
 	    				}
 	    				new Thread(new PaxosDecide(paxosInstance, sendValue, localRep)).start();
+	    				//when one value is decided, check the local cache. If it still has value, need to start a new 
+	    				//paxos instance to determin the entrance of it. OW, dont need to start paxos, wait for another
+	    				//post
+	    				if(localRep.cacheLog.size()!=0){
+	    					new Thread(new PaxosPrepare(localRep)).start();
+	    				}
 	    			}
 	    		}else if(str.substring(2,8).equals("decide")){
 	    			Common commonFunc = new Common();
 	    			int paxosInstance = commonFunc.getPaxosInstanceNumber(str);
 	    			System.out.println("Now the paxos instance is "+paxosInstance);
-	    			String decideValue = str.substring(7);
+	    			String decideValue = str.substring(9);
 	    			if(localRep.paxosHistory.get(paxosInstance).isDecided == false){
 	    				System.out.println("has not decided");
 	    				System.out.println("decide "+decideValue);
 	    				localRep.paxosHistory.get(paxosInstance).isDecided = true;
 	    				localRep.log.add(localRep.paxosInstance, decideValue);
 	    				localRep.paxosInstance++;
-	    				if(localRep.cacheLog.peek().equals(decideValue)){
+	    				if(localRep.paxosHistory.get(paxosInstance).needSendMyOwnValue == true){
 	    					System.out.println("Remove "+localRep.cacheLog.poll()+" in cache");
+	    				}
+	    				if(localRep.cacheLog.size()!=0){
+	    					new Thread(new PaxosPrepare(localRep)).start();
 	    				}
 	    			}
 	    		}
