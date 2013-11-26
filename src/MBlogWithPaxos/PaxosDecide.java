@@ -21,7 +21,7 @@ public class PaxosDecide implements Runnable{
 	//send to all
 	public void run(){
 		try{
-			Socket socket = new Socket("0.0.0.0", 7777);
+			Socket socket = new Socket("54.219.46.244", 7777);
 			DataInputStream in = new DataInputStream(socket.getInputStream());
 			DataOutputStream out = new DataOutputStream(socket.getOutputStream());
 			String TCPMsg = paxosInstance+"|decide|"+decideValue;

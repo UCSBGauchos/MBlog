@@ -17,10 +17,10 @@ public class PaxosPrepare implements Runnable {
 	//it should be modified, send to different servers(IP)
 	public void run(){
 		try{
-			Socket socket = new Socket("0.0.0.0", 7777);
+			Socket socket = new Socket("54.219.46.244", 7777);
 			DataInputStream in = new DataInputStream(socket.getInputStream());
 			DataOutputStream out = new DataOutputStream(socket.getOutputStream());  
-			String TCPMsg = localRep.paxosInstance+"|prepare|"+localRep.paxosHistory[localRep.paxosInstance].promiseBal.balNumber+"|"+localRep.paxosHistory[localRep.paxosInstance].promiseBal.PID+"|"+commonFunc.getLocalIPAddress();
+			String TCPMsg = localRep.paxosInstance+"|prepare|"+localRep.paxosHistory[localRep.paxosInstance].promiseBal.balNumber+"|"+localRep.paxosHistory[localRep.paxosInstance].promiseBal.PID+"|54.245.185.75";
 			out.writeUTF(TCPMsg);
 			
 		}
