@@ -14,6 +14,7 @@ public class PaxosPrepare implements Runnable {
 	public PaxosPrepare(Replication _localRep){
 		this.localRep = _localRep;
 	}
+	//it should be modified, send to different servers(IP)
 	public void run(){
 		try{
 			Socket socket = new Socket("0.0.0.0", 7777);

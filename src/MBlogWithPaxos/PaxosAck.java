@@ -17,6 +17,7 @@ public class PaxosAck implements Runnable{
 		this.localRep = _localRep;
 		this.paxosInstance = _paxosInstance;
 	}
+	//send to the sender
 	public void run(){
 		try{
 			Socket socket = new Socket(souceIP, 7777);

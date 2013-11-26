@@ -15,7 +15,7 @@ public class Common {
 		}else if(sendNumber==localNumber&&sendPID>localPID){
 			return true;
 		}else if(sendNumber==localNumber&&sendPID==localPID){
-			return true; // this equal is just for one machine testing! (should be removed in real project)
+			return true; // this equal is just for one machine testing! (should be removed in real project)*****
 		}else{
 			return false;
 		}

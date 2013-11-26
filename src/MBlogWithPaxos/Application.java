@@ -49,7 +49,7 @@ public class Application {
 		
 		Common commonFunc = new Common();
 		
-		
+		//it is fine, just send to its local
 		if(PostMatcher.matches()){
 			String[] result = PostSplitPattern.split(inputCommand);
 			String microBlog = result[1];

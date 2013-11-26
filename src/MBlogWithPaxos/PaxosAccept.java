@@ -17,6 +17,7 @@ public class PaxosAccept implements Runnable{
 		this.localRep = _localRep;
 		this.paxosInstance = _paxosInstance;
 	}
+	//send to all
 	public void run(){
 		try{
 			Socket socket = new Socket("0.0.0.0", 7777);

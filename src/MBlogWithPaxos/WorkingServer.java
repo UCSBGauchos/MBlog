@@ -47,8 +47,11 @@ public class WorkingServer implements Runnable  {
 	    		}else if(str.substring(0,4).equals("read")){
 	    			String returnMsg="";
 	    			for(String blog: localRep.log){
-	    				String patternBlog = blog+":";
-	    				returnMsg+=patternBlog;
+	    				if(blog!=null){
+	    					//only print those which are not null
+	    					String patternBlog = blog+":";
+		    				returnMsg+=patternBlog;
+	    				}
 			    	}
 	    			if(!returnMsg.equals("")){
 	    				returnMsg = returnMsg.substring(0, returnMsg.length()-1);
@@ -79,7 +82,7 @@ public class WorkingServer implements Runnable  {
 	    			int paxosInstance = commonFunc.getPaxosInstanceNumber(str);
 	    			System.out.println("Now the paxos instance is "+paxosInstance);
 	    			localRep.paxosHistory[paxosInstance].recvAckCount++;
-	    			//majority, for this case, just use one
+	    			//majority***********************
 	    			String ackContent = str.substring(6);
 	    			localRep.paxosHistory[paxosInstance].allAckMsg.add(ackContent);
 	    			if(localRep.paxosHistory[paxosInstance].recvAckCount>0){
@@ -94,7 +97,7 @@ public class WorkingServer implements Runnable  {
 	    					}
 	    					int accNumber = commonFunc.getAccNum(ackStr);
 	    					int accPID = commonFunc.getAccPID(ackStr);
-//	    					here just for testing, in the real environment, it should be unique
+//	    					here just for testing, in the real environment, it should be unique******************
 	    					if(accValue!=null){
 	    						if(accNumber>=maxAccNum){
 	    							maxAccNum = accNumber;
@@ -129,12 +132,11 @@ public class WorkingServer implements Runnable  {
 	    				localRep.paxosHistory[paxosInstance].promiseBal.PID = sendPID;
 	    				localRep.paxosHistory[paxosInstance].acceptVal = sendValue;
 	    			}
-	    			//***************
 	    			if(localRep.paxosHistory[paxosInstance].firstTimeSendAcc == true){
 	    				System.out.println("Has never sent accept msg, so I will send it now!");
 	    				new Thread(new PaxosAccept(paxosInstance, localRep.paxosHistory[paxosInstance].acceptVal, localRep)).start();
 	    			}
-	    			//accept from majority, here for testing, just need to be one
+	    			//accept from majority********************************
 	    			//decide v and start decide thread
 	    			//add it to the instance location of the log
 	    			if(localRep.paxosHistory[paxosInstance].recvAccCount>0){

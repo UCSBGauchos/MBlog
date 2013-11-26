@@ -18,6 +18,7 @@ public class PaxosDecide implements Runnable{
 		this.localRep = _locaRep;
 		this.paxosInstance = _paxosInstance;
 	}
+	//send to all
 	public void run(){
 		try{
 			Socket socket = new Socket("0.0.0.0", 7777);
