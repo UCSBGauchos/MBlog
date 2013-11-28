@@ -74,7 +74,7 @@ public class WorkingServer implements Runnable  {
 	    				String souceIP = commonFunc.getSouceIP(sendMsg);
 	    				new Thread(new PaxosAck(paxosInstance, souceIP, localRep)).start();
 	    			}else{
-	    				System.out.println("Send is not bigger than promise, should not return ack");
+	    				System.out.println("Send is not bigger than promise, not return ack");
 	    				String TCPMsg = "deny";
 	    			}
 	    		}else if(str.substring(2,5).equals("ack")){
@@ -89,7 +89,7 @@ public class WorkingServer implements Runnable  {
 	    				String myValue = null;
 	    				int maxAccNum = 0;
 	    				int maxAccPID = 0;
-	    				//traverse all the majority, get the value with the bigest if it is not null, else use ite own
+	    				//traverse all the majority, get the value with the bigest if it is not null, else use its own
 	    				for(String ackStr: localRep.paxosHistory[paxosInstance].allAckMsg){
 	    					String accValue = commonFunc.getAccValue(ackStr);
 	    					if(accValue.equals("null")){
@@ -153,6 +153,11 @@ public class WorkingServer implements Runnable  {
 	    				//paxos instance to determin the entrance of it. OW, dont need to start paxos, wait for another
 	    				//post
 	    				if(localRep.cacheLog.size()!=0){
+	    					while(localRep.log[localRep.paxosInstance] != null){
+	    	    				localRep.paxosInstance++;
+	    	    			}
+	    	    			localRep.paxosHistory[localRep.paxosInstance] = new PaxosVariables();
+	    	    			localRep.paxosHistory[localRep.paxosInstance].promiseBal.balNumber++;
 	    					new Thread(new PaxosPrepare(localRep)).start();
 	    				}
 	    			}
@@ -171,6 +176,11 @@ public class WorkingServer implements Runnable  {
 	    					System.out.println("Remove "+localRep.cacheLog.poll()+" in cache");
 	    				}
 	    				if(localRep.cacheLog.size()!=0){
+	    					while(localRep.log[localRep.paxosInstance] != null){
+	    	    				localRep.paxosInstance++;
+	    	    			}
+	    	    			localRep.paxosHistory[localRep.paxosInstance] = new PaxosVariables();
+	    	    			localRep.paxosHistory[localRep.paxosInstance].promiseBal.balNumber++;
 	    					new Thread(new PaxosPrepare(localRep)).start();
 	    				}
 	    			}

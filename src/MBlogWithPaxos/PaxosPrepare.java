@@ -15,17 +15,27 @@ public class PaxosPrepare implements Runnable {
 		this.localRep = _localRep;
 	}
 	//it should be modified, send to different servers(IP)
+	//important! preiodly
 	public void run(){
 		try{
-			Socket socket = new Socket("54.219.46.244", 7777);
-			DataInputStream in = new DataInputStream(socket.getInputStream());
-			DataOutputStream out = new DataOutputStream(socket.getOutputStream());  
-			String TCPMsg = localRep.paxosInstance+"|prepare|"+localRep.paxosHistory[localRep.paxosInstance].promiseBal.balNumber+"|"+localRep.paxosHistory[localRep.paxosInstance].promiseBal.PID+"|54.245.185.75";
-			out.writeUTF(TCPMsg);
+			int currentInstancePaxos = localRep.paxosInstance;
+			while(localRep.paxosHistory[currentInstancePaxos].isDecided!=true){
+				Socket socket = new Socket("54.219.46.244", 7777);
+				DataInputStream in = new DataInputStream(socket.getInputStream());
+				DataOutputStream out = new DataOutputStream(socket.getOutputStream()); 
+				String TCPMsg = currentInstancePaxos+"|prepare|"+localRep.paxosHistory[currentInstancePaxos].promiseBal.balNumber+"|"+localRep.paxosHistory[currentInstancePaxos].promiseBal.PID+"|54.245.185.75";
+				localRep.paxosHistory[currentInstancePaxos].promiseBal.balNumber++;
+				out.writeUTF(TCPMsg);
+				Thread.sleep(5000);
+			}
 			
 		}
 		catch(IOException e){
 			System.out.println("cannot connect to the server, please check your server status");
+		}
+		catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 	}
 }

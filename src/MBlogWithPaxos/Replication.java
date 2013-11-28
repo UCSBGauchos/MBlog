@@ -27,6 +27,9 @@ public class Replication {
 		this.cacheLog = new LinkedList<String>();
 		this.log = new String [500];
 		this.paxosHistory = new PaxosVariables [500];
+		for(PaxosVariables c : this.paxosHistory){
+			System.out.println(c.recvAccCount);
+		}
 	}
 	
 //	//to start a new instance, need to initial the node except the log
