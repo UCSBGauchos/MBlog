@@ -1,0 +1,43 @@
+package MBlogWithPaxos;
+
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.IOException;
+import java.net.Socket;
+
+//Phase 2 in Paxos
+//This thread is for sending accept MSG to all the other servers in the system
+//The msg should be "accept bal value" 
+public class PaxosAccept implements Runnable{
+	String myValue;
+	Replication localRep;
+	int paxosInstance;
+	public PaxosAccept(int _paxosInstance, String _myValue, Replication _localRep){
+		this.myValue = _myValue;
+		this.localRep = _localRep;
+		this.paxosInstance = _paxosInstance;
+	}
+	//send to all
+	public void run(){
+		try{
+			Socket socket1 = new Socket("54.219.46.244", 7777);
+			DataInputStream in1 = new DataInputStream(socket1.getInputStream());
+			DataOutputStream out1 = new DataOutputStream(socket1.getOutputStream());
+			Socket socket2 = new Socket("localhost", 7777);
+                        DataInputStream in2 = new DataInputStream(socket2.getInputStream());
+                        DataOutputStream out2 = new DataOutputStream(socket2.getOutputStream());  
+			String TCPMsg = paxosInstance+"|accept|"+localRep.paxosHistory[paxosInstance].promiseBal.balNumber+"|"+localRep.paxosHistory[paxosInstance].promiseBal.PID+"|"+myValue;
+			//only the first time need to send accept broadcase
+			localRep.paxosHistory[paxosInstance].firstTimeSendAcc = false;
+			if(myValue!=null){
+			    
+			
+			out1.writeUTF(TCPMsg);
+			out2.writeUTF(TCPMsg);
+			}
+		}
+		catch(IOException e){
+			System.out.println("cannot connect to the server, please check your server status");
+		}
+	}
+}

@@ -50,6 +50,13 @@ public class Common {
 		String value = messageElements[4];
 		return value;
 	}
+
+
+	public String getAckIP(String sendBalInMsg){
+		String [] messageElements = sendBalInMsg.split("\\|");
+		String ackIP = messageElements[5];
+		return ackIP;
+	}
 	
 	public int getAccNum(String sendBalInMsg){
 		String [] messageElements = sendBalInMsg.split("\\|");
@@ -69,6 +76,12 @@ public class Common {
 		return sendValue;
 	}
 	
+
+	public String getAcceptIP(String sendBalInMsg){
+		String [] messageElements = sendBalInMsg.split("\\|");
+		String acceptIP= messageElements[3];
+		return acceptIP;
+	}
 	
 	
 	public int stringToInt(String str){

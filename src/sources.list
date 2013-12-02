@@ -1,0 +1,13 @@
+/home/ec2-user/MBlog/src/MBlogWithPaxos/PaxosVariables.java
+/home/ec2-user/MBlog/src/MBlogWithPaxos/Application.java
+/home/ec2-user/MBlog/src/MBlogWithPaxos/Message.java
+/home/ec2-user/MBlog/src/MBlogWithPaxos/Common.java
+/home/ec2-user/MBlog/src/MBlogWithPaxos/BallotNum.java
+/home/ec2-user/MBlog/src/MBlogWithPaxos/PaxosDecide.java
+/home/ec2-user/MBlog/src/MBlogWithPaxos/PaxosPrepare.java
+/home/ec2-user/MBlog/src/MBlogWithPaxos/Replication.java
+/home/ec2-user/MBlog/src/MBlogWithPaxos/TCPServer.java
+/home/ec2-user/MBlog/src/MBlogWithPaxos/WorkingServer.java
+/home/ec2-user/MBlog/src/MBlogWithPaxos/Client.java
+/home/ec2-user/MBlog/src/MBlogWithPaxos/PaxosAccept.java
+/home/ec2-user/MBlog/src/MBlogWithPaxos/PaxosAck.java

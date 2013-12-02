@@ -81,15 +81,11 @@ public class WorkingServer implements Runnable  {
 	    			Common commonFunc = new Common();
 	    			int paxosInstance = commonFunc.getPaxosInstanceNumber(str);
 	    			System.out.println("Now the paxos instance is "+paxosInstance);
-	    			//localRep.paxosHistory[paxosInstance].recvAckCount++;
+	    			localRep.paxosHistory[paxosInstance].recvAckCount++;
 	    			//majority***********************
 	    			String ackContent = str.substring(6);
-				String ackIP = commonFunc.getAckIP(ackContent);
-				if(!localRep.paxosHistory[paxosInstance].ackIPs.contains(ackIP)){
-	    				localRep.paxosHistory[paxosInstance].ackIPs.add(ackIP);
-	    			}
 	    			localRep.paxosHistory[paxosInstance].allAckMsg.add(ackContent);
-	    			if(localRep.paxosHistory[paxosInstance].ackIPs.size()>1){
+	    			if(localRep.paxosHistory[paxosInstance].recvAckCount>0){
 	    				String myValue = null;
 	    				int maxAccNum = 0;
 	    				int maxAccPID = 0;
@@ -119,12 +115,12 @@ public class WorkingServer implements Runnable  {
 	    					localRep.paxosHistory[paxosInstance].needSendMyOwnValue = true;
 	    				}
 	    				System.out.println("send value is "+myValue);
-	  
+					if(myValue!=null){
 					    
 					
 
 					    new Thread(new PaxosAccept(paxosInstance, myValue, localRep)).start();
-					
+					}
 	    			}
 	    		}else if(str.substring(2,8).equals("accept")){
 	    			Common commonFunc = new Common();
@@ -135,11 +131,7 @@ public class WorkingServer implements Runnable  {
 	    			int sendBalPID = commonFunc.getPromisePID(acceptContent);
 	    			int sendPID = commonFunc.getPromisePID(acceptContent);
 	    			String sendValue = commonFunc.getSendValue(acceptContent);
-	    			//localRep.paxosHistory[paxosInstance].recvAccCount++;
-				String acceptIP = commonFunc.getAcceptIP(acceptContent);
-	    			if(!localRep.paxosHistory[paxosInstance].acceptIPs.contains(acceptIP)){
-	    				localRep.paxosHistory[paxosInstance].acceptIPs.add(acceptIP);
-	    			}
+	    			localRep.paxosHistory[paxosInstance].recvAccCount++;
 	    			if(sendBalNum>localRep.paxosHistory[paxosInstance].promiseBal.balNumber
 				   ||sendBalNum==localRep.paxosHistory[paxosInstance].promiseBal.balNumber
 				   &&sendBalPID>=localRep.paxosHistory[paxosInstance].promiseBal.PID){
@@ -155,7 +147,7 @@ public class WorkingServer implements Runnable  {
 	    			//accept from majority********************************
 	    			//decide v and start decide thread
 	    			//add it to the instance location of the log
-	    			if(localRep.paxosHistory[paxosInstance].acceptIPs.size()>1){
+	    			if(localRep.paxosHistory[paxosInstance].recvAccCount>0){
 	    				System.out.println("decide "+sendValue);
 	    				localRep.paxosHistory[paxosInstance].isDecided = true;
 	    				localRep.log[paxosInstance] = sendValue;
