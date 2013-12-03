@@ -25,7 +25,7 @@ public class TCPServer {
 		Socket socket = null;
 	    try{
             server=new ServerSocket(7777);
-	    }
+	    }:
 	    catch(IOException e){
             System.out.println("ERRO:"+e);
         } 
