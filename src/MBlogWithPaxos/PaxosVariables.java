@@ -1,7 +1,6 @@
 package MBlogWithPaxos;
 
 import java.util.ArrayList;
-import java.util.Hashtable;
 
 public class PaxosVariables {
 	BallotNum promiseBal;
@@ -18,8 +17,8 @@ public class PaxosVariables {
 	
 	
 	public PaxosVariables(){
-		this.promiseBal = new BallotNum(0,0);
-		this.acceptBal = new BallotNum(0,0);
+		this.promiseBal = new BallotNum(0,1);
+		this.acceptBal = new BallotNum(0,1);
 		this.acceptVal = null;
 		this.recvAckCount = 0;
 		this.recvAccCount = 0;
@@ -27,7 +26,7 @@ public class PaxosVariables {
 		this.isDecided = false;
 		this.needSendMyOwnValue = false;
 		this.allAckMsg = new ArrayList<String>();
-		this.acceptIPs = new ArrayList<String>();
 		this.ackIPs = new ArrayList<String>();
+		this.acceptIPs = new ArrayList<String>();
 	}
 }

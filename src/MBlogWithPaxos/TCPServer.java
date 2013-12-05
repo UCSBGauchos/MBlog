@@ -14,9 +14,11 @@ import java.util.regex.Pattern;
 public class TCPServer {
 	
 	 Replication localRep;
+	static Boolean isWork;
 	
 	public TCPServer(Replication _localRep){
 		this.localRep = _localRep;
+		this.isWork = true;
 	}
 	
 	
@@ -25,7 +27,7 @@ public class TCPServer {
 		Socket socket = null;
 	    try{
             server=new ServerSocket(7777);
-	    }:
+	    }
 	    catch(IOException e){
             System.out.println("ERRO:"+e);
         } 
@@ -33,8 +35,9 @@ public class TCPServer {
 	    //Then different clients can send messages to one rep at the same time. (Different thread handle different messages).  
 	    try{
 	    	while(true){
-	    		socket = server.accept();
-	    		new Thread(new WorkingServer(socket, localRep)).start();
+			System.out.println(this.isWork);
+			socket = server.accept();
+                        new Thread(new WorkingServer(socket, localRep)).start();
 	    	}
 	    }catch(IOException e){
 	    	System.out.println("ERRO:"+e);

@@ -12,6 +12,7 @@ public class WorkingServer implements Runnable  {
 	
 	Socket socket;
 	Replication localRep;
+
 	WorkingServer(Socket s, Replication log){
 		this.socket = s;
 		this.localRep = log;
@@ -30,8 +31,14 @@ public class WorkingServer implements Runnable  {
 			System.out.println("Recv "+str);
 	    	if(str!=null){
 	    		//for post, just need to write the post content to the cache, here don't need to start the paxos
-	    		//store each paxos's instance's paxos variables in the paxos history log
-	    		if(str.substring(0, 4).equals("post")){
+	    		if(TCPServer.isWork == false){
+				System.out.println("Server is down, may NOT send feedback!");
+			}
+	    		if(str.substring(0,4).equals("fail")){
+				System.out.println("Here need abort");
+				out.writeUTF("Abort success!");
+				TCPServer.isWork = false;
+			}else if(str.substring(0, 4).equals("post")&&TCPServer.isWork == true){
 	    			String recvMicroBlog = str.substring(5);
 	    			localRep.cacheLog.add(recvMicroBlog);
 	    			//initial all the paxos variables in the local instance(local instance)
@@ -41,10 +48,13 @@ public class WorkingServer implements Runnable  {
 	    			}
 	    			localRep.paxosHistory[localRep.paxosInstance] = new PaxosVariables();
 	    			localRep.paxosHistory[localRep.paxosInstance].promiseBal.balNumber++;
-	    		    new Thread(new PaxosPrepare(localRep)).start();
+	    		        new Thread(new PaxosPrepare(localRep)).start();
 			    	String returnMsg = "SUCCESS";
 			    	out.writeUTF(returnMsg);
-	    		}else if(str.substring(0,4).equals("read")){
+	    		}else if(str.substring(0, 4).equals("post")&&TCPServer.isWork == false){
+				System.out.println("Server is down!");
+				out.writeUTF("FAIL");
+			}else if(str.substring(0,4).equals("read")&&TCPServer.isWork == true){
 	    			String returnMsg="";
 	    			for(String blog: localRep.log){
 	    				if(blog!=null){
@@ -57,7 +67,14 @@ public class WorkingServer implements Runnable  {
 	    				returnMsg = returnMsg.substring(0, returnMsg.length()-1);
 	    			}
 	    			out.writeUTF(returnMsg);
-	    		}else if(str.substring(2, 9).equals("prepare")){
+	    		}else if(str.substring(0,4).equals("read")&&TCPServer.isWork == false){
+				System.out.println("Server is down!");
+				out.writeUTF("FAIL");
+			}else if(str.substring(0, 6).equals("unfail")){
+                                System.out.println("restart to work");
+                                out.writeUTF("Restart success!");
+                                TCPServer.isWork = true;
+                        }else if(str.substring(2, 9).equals("prepare")&&TCPServer.isWork == true){
 	    			Common commonFunc = new Common();
 	    			int paxosInstance = commonFunc.getPaxosInstanceNumber(str);
 	    			String sendMsg = str.substring(10);
@@ -77,7 +94,7 @@ public class WorkingServer implements Runnable  {
 	    				System.out.println("Send is not bigger than promise, should not return ack");
 	    				String TCPMsg = "deny";
 	    			}
-	    		}else if(str.substring(2,5).equals("ack")){
+	    		}else if(str.substring(2,5).equals("ack")&&TCPServer.isWork == true){
 	    			Common commonFunc = new Common();
 	    			int paxosInstance = commonFunc.getPaxosInstanceNumber(str);
 	    			System.out.println("Now the paxos instance is "+paxosInstance);
@@ -89,7 +106,7 @@ public class WorkingServer implements Runnable  {
 	    				localRep.paxosHistory[paxosInstance].ackIPs.add(ackIP);
 	    			}
 	    			localRep.paxosHistory[paxosInstance].allAckMsg.add(ackContent);
-	    			if(localRep.paxosHistory[paxosInstance].ackIPs.size()>1){
+	    			if(localRep.paxosHistory[paxosInstance].ackIPs.size()>2){
 	    				String myValue = null;
 	    				int maxAccNum = 0;
 	    				int maxAccPID = 0;
@@ -126,7 +143,7 @@ public class WorkingServer implements Runnable  {
 					    new Thread(new PaxosAccept(paxosInstance, myValue, localRep)).start();
 					
 	    			}
-	    		}else if(str.substring(2,8).equals("accept")){
+	    		}else if(str.substring(2,8).equals("accept")&&TCPServer.isWork == true){
 	    			Common commonFunc = new Common();
 	    			int paxosInstance = commonFunc.getPaxosInstanceNumber(str);
 	    			System.out.println("Now the paxos instance is "+paxosInstance);
@@ -155,7 +172,7 @@ public class WorkingServer implements Runnable  {
 	    			//accept from majority********************************
 	    			//decide v and start decide thread
 	    			//add it to the instance location of the log
-	    			if(localRep.paxosHistory[paxosInstance].acceptIPs.size()>1){
+	    			if(localRep.paxosHistory[paxosInstance].acceptIPs.size()>2){
 	    				System.out.println("decide "+sendValue);
 	    				localRep.paxosHistory[paxosInstance].isDecided = true;
 	    				localRep.log[paxosInstance] = sendValue;
@@ -179,7 +196,7 @@ public class WorkingServer implements Runnable  {
 	    					new Thread(new PaxosPrepare(localRep)).start();
 	    				}
 	    			}
-	    		}else if(str.substring(2,8).equals("decide")){
+	    		}else if(str.substring(2,8).equals("decide")&&TCPServer.isWork == true){
 	    			Common commonFunc = new Common();
 	    			int paxosInstance = commonFunc.getPaxosInstanceNumber(str);
 	    			System.out.println("Now the paxos instance is "+paxosInstance);

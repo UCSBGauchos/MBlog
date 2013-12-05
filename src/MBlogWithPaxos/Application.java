@@ -26,10 +26,18 @@ public class Application {
 	//fail
 	public void fail(){
 		System.out.println("Begin fail process");
+		String TCPMsg = "fail";
+		Client c = new Client();
+		String result = c.clientFunction("localhost", TCPMsg);
+                System.out.println(result);
 	}
 	//unfail
 	public void unfail(){
 		System.out.println("Begin unfail process");
+		String TCPMsg = "unfail";
+		Client c = new Client();
+		String result = c.clientFunction("localhost", TCPMsg);
+                System.out.println(result);
 	}
 	
 	public void commandLineInterface(String inputCommand){
